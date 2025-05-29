@@ -1,6 +1,6 @@
 import sequelize from '../config/database.js';
 import config from '../config/index.js';
-import { Department, Module } from '../models/index.model.js';
+import { Department, Resource } from '../models/index.model.js';
 import { ApiError } from '../utils/ApiError.js';
 
 const isDev = config.environment === 'development';
@@ -13,19 +13,19 @@ export const createDepartment = async (req, res, next) => {
         if (!departmentName) throw new ApiError(400, 'Department name is required');
 
         if (!Array.isArray(accessForDepartment) || accessForDepartment.length === 0)
-            throw new ApiError(400, 'At least one permission module is required');
+            throw new ApiError(400, 'At least one permission resource is required');
 
         const existing = await Department.findOne({ where: { name: departmentName } });
         if (existing) throw new ApiError(409, 'Department already exists');
 
         const department = await Department.create({ name: departmentName }, { transaction: t });
 
-        const modules = accessForDepartment.map(mod => ({
-            ...mod,
+        const resources = accessForDepartment.map(resource => ({
+            ...resource,
             departmentId: department.id,
         }));
 
-        await Module.bulkCreate(modules, { transaction: t });
+        await Resource.bulkCreate(resources, { transaction: t });
 
         await t.commit();
 
@@ -36,7 +36,7 @@ export const createDepartment = async (req, res, next) => {
         });
     } catch (error) {
         await t.rollback();
-        if (isDev) console.error('[CREATE_DEPARTMENT_ERROR]', error);
+        if (isDev) console.error('[DEPARTMENT_ERROR]', error);
         next(error);
     }
 };
@@ -46,7 +46,7 @@ export const getDepartments = async (req, res, next) => {
         const departments = await Department.findAll({
             attributes: ['id', 'name', 'status'],
             include: [
-                { model: Module, as: 'modules', attributes: ['id', 'title', 'actions'] }
+                { model: Resource, as: 'resources', attributes: ['id', 'title', 'actions'] }
             ]
         });
 
@@ -56,7 +56,7 @@ export const getDepartments = async (req, res, next) => {
             departments,
         });
     } catch (error) {
-        if (isDev) console.error('[GET_DEPARTMENTS_ERROR]', error);
+        if (isDev) console.error('[DEPARTMENT_ERROR]', error);
         next(error);
     }
 };
@@ -71,7 +71,7 @@ export const updateDepartment = async (req, res, next) => {
         const existingDepartment = await Department.findByPk(departmentId, {
             attributes: ['id', 'name', 'status'],
             include: [
-                { model: Module, as: 'modules', attributes: ['id', 'title', 'actions'] }
+                { model: Resource, as: 'resources', attributes: ['id', 'title', 'actions'] }
             ]
         });
 
@@ -88,11 +88,11 @@ export const updateDepartment = async (req, res, next) => {
         }
 
         if (Array.isArray(accessForDepartment)) {
-            await Module.destroy({ where: { departmentId } });
+            await Resource.destroy({ where: { departmentId } });
 
-            await Module.bulkCreate(
-                accessForDepartment.map(module => ({
-                    ...module,
+            await Resource.bulkCreate(
+                accessForDepartment.map(resource => ({
+                    ...resource,
                     departmentId,
                 }))
             );
@@ -107,7 +107,7 @@ export const updateDepartment = async (req, res, next) => {
         });
 
     } catch (error) {
-        if (isDev) console.error('[UPDATE_DEPARTMENT_ERROR]', error);
+        if (isDev) console.error('[DEPARTMENT_ERROR]', error);
         next(error);
     }
 };

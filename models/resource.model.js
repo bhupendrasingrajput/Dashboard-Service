@@ -1,7 +1,7 @@
 import { JSON, STRING, UUID, UUIDV4 } from "sequelize";
 import sequelize from "../config/database.js";
 
-const Module = sequelize.define('Access',
+const Resource = sequelize.define('Access',
     {
         id: {
             type: UUID,
@@ -21,7 +21,7 @@ const Module = sequelize.define('Access',
             allowNull: false
         },
     },
-    { tableName: 'modules', timestamps: true }
+    { tableName: 'resources', timestamps: true }
 )
 
-export default Module;
+export default Resource;

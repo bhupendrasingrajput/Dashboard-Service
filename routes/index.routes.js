@@ -1,5 +1,6 @@
 import express from 'express';
 import department_routes from './department.routes.js';
+import designation_routes from './designation.routes.js';
 
 const router = express.Router();
 
@@ -13,5 +14,6 @@ router.get('/', (req, res) => {
 });
 
 router.use('/department', department_routes);
+router.use('/designation', designation_routes);
 
 export default router;
