@@ -1,0 +1,113 @@
+import sequelize from '../config/database.js';
+import config from '../config/index.js';
+import { Department, Module } from '../models/index.model.js';
+import { ApiError } from '../utils/ApiError.js';
+
+const isDev = config.environment === 'development';
+
+export const createDepartment = async (req, res, next) => {
+    const t = await sequelize.transaction();
+    try {
+        const { departmentName, accessForDepartment } = req.body;
+
+        if (!departmentName) throw new ApiError(400, 'Department name is required');
+
+        if (!Array.isArray(accessForDepartment) || accessForDepartment.length === 0)
+            throw new ApiError(400, 'At least one permission module is required');
+
+        const existing = await Department.findOne({ where: { name: departmentName } });
+        if (existing) throw new ApiError(409, 'Department already exists');
+
+        const department = await Department.create({ name: departmentName }, { transaction: t });
+
+        const modules = accessForDepartment.map(mod => ({
+            ...mod,
+            departmentId: department.id,
+        }));
+
+        await Module.bulkCreate(modules, { transaction: t });
+
+        await t.commit();
+
+        res.status(201).json({
+            success: true,
+            message: 'Department created successfully',
+            data: { department },
+        });
+    } catch (error) {
+        await t.rollback();
+        if (isDev) console.error('[CREATE_DEPARTMENT_ERROR]', error);
+        next(error);
+    }
+};
+
+export const getDepartments = async (req, res, next) => {
+    try {
+        const departments = await Department.findAll({
+            attributes: ['id', 'name', 'status'],
+            include: [
+                { model: Module, as: 'modules', attributes: ['id', 'title', 'actions'] }
+            ]
+        });
+
+        res.status(200).json({
+            success: true,
+            success: "Departments retrieved successfully",
+            departments,
+        });
+    } catch (error) {
+        if (isDev) console.error('[GET_DEPARTMENTS_ERROR]', error);
+        next(error);
+    }
+};
+
+export const updateDepartment = async (req, res, next) => {
+    try {
+        const { departmentId } = req.params;
+        const { departmentName, accessForDepartment } = req.body;
+
+        if (!departmentId) throw new ApiError(400, 'Department ID is required');
+
+        const existingDepartment = await Department.findByPk(departmentId, {
+            attributes: ['id', 'name', 'status'],
+            include: [
+                { model: Module, as: 'modules', attributes: ['id', 'title', 'actions'] }
+            ]
+        });
+
+        if (!existingDepartment) throw new ApiError(404, 'Department not found');
+
+        if (departmentName && departmentName !== existingDepartment.name) {
+            const nameExists = await Department.findOne({
+                where: { name: departmentName },
+            });
+
+            if (nameExists) throw new ApiError(409, 'Another department with this name already exists');
+
+            existingDepartment.name = departmentName;
+        }
+
+        if (Array.isArray(accessForDepartment)) {
+            await Module.destroy({ where: { departmentId } });
+
+            await Module.bulkCreate(
+                accessForDepartment.map(module => ({
+                    ...module,
+                    departmentId,
+                }))
+            );
+        }
+
+        await existingDepartment.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Department updated successfully',
+            department: existingDepartment,
+        });
+
+    } catch (error) {
+        if (isDev) console.error('[UPDATE_DEPARTMENT_ERROR]', error);
+        next(error);
+    }
+};

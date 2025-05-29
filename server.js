@@ -28,7 +28,7 @@ if (cluster.isPrimary) {
                 console.log(`🚀 Worker processs ${process.pid} running on port ${PORT}`);
             });
         } catch (err) {
-            console.error('❌ Auth service startup failed:', err);
+            console.error('❌ Dashboard service startup failed:', err);
             process.exit(1);
         }
     })();

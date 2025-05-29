@@ -1,4 +1,5 @@
 import express from 'express';
+import department_routes from './department.routes.js';
 
 const router = express.Router();
 
@@ -10,5 +11,7 @@ router.get('/', (req, res) => {
         timestamp: new Date().toISOString()
     });
 });
+
+router.use('/department', department_routes);
 
 export default router;
