@@ -3,7 +3,6 @@ import config from '../config/index.js';
 import { Department, Resource } from '../models/index.model.js';
 import { ApiError } from '../utils/ApiError.js';
 
-const isDev = config.environment === 'development';
 
 export const createDepartment = async (req, res, next) => {
     const t = await sequelize.transaction();
@@ -36,7 +35,7 @@ export const createDepartment = async (req, res, next) => {
         });
     } catch (error) {
         await t.rollback();
-        if (isDev) console.error('[DEPARTMENT_ERROR]', error);
+        
         next(error);
     }
 };
@@ -44,7 +43,7 @@ export const createDepartment = async (req, res, next) => {
 export const getDepartments = async (req, res, next) => {
     try {
         const departments = await Department.findAll({
-            attributes: ['id', 'name', 'status'],
+            attributes: ['id', 'name', 'status', 'isVerified'],
             include: [
                 { model: Resource, as: 'resources', attributes: ['id', 'title', 'actions'] }
             ]
@@ -56,7 +55,6 @@ export const getDepartments = async (req, res, next) => {
             departments,
         });
     } catch (error) {
-        if (isDev) console.error('[DEPARTMENT_ERROR]', error);
         next(error);
     }
 };
@@ -107,7 +105,7 @@ export const updateDepartment = async (req, res, next) => {
         });
 
     } catch (error) {
-        if (isDev) console.error('[DEPARTMENT_ERROR]', error);
+        
         next(error);
     }
 };

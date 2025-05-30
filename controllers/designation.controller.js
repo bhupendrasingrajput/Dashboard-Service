@@ -4,8 +4,6 @@ import config from '../config/index.js';
 import { Department, Resource, Designation, Permission } from '../models/index.model.js';
 import { ApiError } from '../utils/ApiError.js';
 
-const isDev = config.environment === 'development';
-
 export const createDesignation = async (req, res, next) => {
     const t = await sequelize.transaction();
     try {
@@ -55,7 +53,6 @@ export const createDesignation = async (req, res, next) => {
         });
     } catch (error) {
         await t.rollback();
-        if (isDev) console.error('[DESIGNATION_ERROR]', error);
         next(error);
     }
 };
@@ -95,7 +92,6 @@ export const getDesignations = async (req, res, next) => {
             data: designations,
         });
     } catch (error) {
-        if (isDev) { console.error('[DESIGNATION_ERROR]', { error, query: req.query, }); }
         next(error);
     }
 };
@@ -149,7 +145,6 @@ export const updateDesignation = async (req, res, next) => {
 
         return res.status(200).json(result);
     } catch (error) {
-        if (isDev) console.error('[DESIGNATION_UPDATE_ERROR]', error);
         next(error);
     }
 };

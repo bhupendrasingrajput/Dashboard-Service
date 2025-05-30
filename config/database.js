@@ -37,7 +37,6 @@ export const connectToDatabase = async (retries = 3) => {
         try {
             await sequelize.authenticate();
             console.log("✅ Database connected successfully.");
-            sequelize.sync({ alter: true });
             return;
         } catch (err) {
             console.error(`🐞 Database connection failed. Retries left: ${retries - 1}`, err);

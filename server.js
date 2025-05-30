@@ -5,6 +5,7 @@ import os from 'os';
 import config from './config/index.js';
 import { connectToDatabase } from './config/database.js';
 import startApp from './app.js';
+import { connectRedis } from './config/redis.js'
 
 const numCPUs = config.environment === 'development' ? 2 : os.cpus().length;
 const PORT = config.port;
@@ -22,6 +23,8 @@ if (cluster.isPrimary) {
     (async () => {
         try {
             await connectToDatabase();
+            await connectRedis();
+            
             const app = await startApp();
 
             app.listen(PORT, () => {
