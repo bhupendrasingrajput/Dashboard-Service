@@ -35,7 +35,7 @@ export const createDepartment = async (req, res, next) => {
         });
     } catch (error) {
         await t.rollback();
-        
+
         next(error);
     }
 };
@@ -105,7 +105,7 @@ export const updateDepartment = async (req, res, next) => {
         });
 
     } catch (error) {
-        
+
         next(error);
     }
 };

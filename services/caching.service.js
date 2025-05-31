@@ -10,7 +10,7 @@ export const getCache = async (key) => {
     }
 }
 
-export const setCache = async (key, value, ttl = 3600) => {
+export const setCache = async (key, value, ttl = 600) => {
     try {
         const data = JSON.stringify(value);
         await redis.set(key, data, 'EX', ttl);

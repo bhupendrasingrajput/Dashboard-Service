@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import sequelize from '../config/database.js';
-import config from '../config/index.js';
-import { Department, Resource, Designation, Permission } from '../models/index.model.js';
+import { Department, Designation, Permission, Resource } from '../models/index.model.js';
+import { deleteCache } from '../services/caching.service.js';
 import { ApiError } from '../utils/ApiError.js';
 
 export const createDesignation = async (req, res, next) => {
@@ -135,6 +135,8 @@ export const updateDesignation = async (req, res, next) => {
         }
 
         await designation.save();
+
+        await deleteCache(`dashboard:permissions:${id}`);
 
         const result = {
             success: true,

@@ -132,7 +132,7 @@ export const getAdminPermissions = async (req, res, next) => {
             return acc;
         }, {});
 
-        await setCache(cacheKey, permissions, 600);
+        await setCache(cacheKey, permissions, 900);
 
         return res.status(200).json({
             status: 'success',
@@ -142,5 +142,29 @@ export const getAdminPermissions = async (req, res, next) => {
 
     } catch (error) {
         next(error);
+    }
+}
+
+export const getAdmins = async (req, res, next) => {
+    try {
+        const { id } = req.query;
+        const admins = await Admin.findAll({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'designationId', 'departmentId', 'teamId']
+            },
+            include: [
+                { model: Department, as: 'department', attributes: ['id', 'name'] },
+                { model: Team, as: 'team', attributes: ['id', 'name'] },
+            ]
+        });
+
+        res.json({
+            success: true,
+            message: 'Admins Fetched Successfully!',
+            admins
+        });
+
+    } catch (error) {
+        next(error)
     }
 }
