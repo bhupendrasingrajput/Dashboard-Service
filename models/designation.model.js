@@ -8,10 +8,6 @@ const Designation = sequelize.define('Designation',
             defaultValue: UUIDV4,
             primaryKey: true
         },
-        departmentId: {
-            type: UUID,
-            references: { model: 'departments', key: 'id' }
-        },
         name: {
             type: STRING,
             allowNull: false,
@@ -24,7 +20,11 @@ const Designation = sequelize.define('Designation',
         isVerified: {
             type: BOOLEAN,
             defaultValue: true
-        }
+        },
+        departmentId: {
+            type: UUID,
+            references: { model: 'departments', key: 'id' }
+        },
     },
     { tableName: 'designations', timestamps: true }
 )

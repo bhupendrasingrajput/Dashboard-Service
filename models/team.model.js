@@ -12,11 +12,6 @@ const Team = sequelize.define('Team',
             type: STRING,
             allowNull: false
         },
-        departmentId: {
-            type: UUID,
-            allowNull: false,
-            references: { model: 'departments', key: 'id' }
-        },
         status: {
             type: ENUM('active', 'inactive'),
             defaultValue: 'active'
@@ -24,7 +19,12 @@ const Team = sequelize.define('Team',
         isVerified: {
             type: BOOLEAN,
             defaultValue: true
-        }
+        },
+        departmentId: {
+            type: UUID,
+            allowNull: false,
+            references: { model: 'departments', key: 'id' }
+        },
     },
     {
         tableName: 'teams',

@@ -8,11 +8,6 @@ const Admin = sequelize.define('Admin',
             defaultValue: UUIDV4,
             primaryKey: true
         },
-        centralUserId: {
-            type: UUID,
-            unique: true,
-            allowNull: false
-        },
         name: {
             type: STRING,
             allowNull: false
@@ -57,7 +52,12 @@ const Admin = sequelize.define('Admin',
         isVerified: {
             type: BOOLEAN,
             defaultValue: true
-        }
+        },
+        centralUserId: {
+            type: UUID,
+            unique: true,
+            allowNull: false
+        },
     },
     {
         tableName: 'admins',

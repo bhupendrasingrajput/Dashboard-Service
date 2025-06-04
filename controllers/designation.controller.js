@@ -35,8 +35,8 @@ export const createDesignation = async (req, res, next) => {
                 }
 
                 permissionEntries.push({
-                    id: newDesignation.id,
-                    resourceId,
+                    designationId: newDesignation?.id,
+                    resourceId: parseInt(resourceId),
                     actions,
                 });
             }
@@ -82,10 +82,6 @@ export const getDesignations = async (req, res, next) => {
                 },
             ],
         });
-
-        if (departmentId && designations.length === 0) {
-            throw new ApiError(404, 'No designations found for this Department');
-        }
 
         res.status(200).json({
             message: 'Designations retrieved successfully',

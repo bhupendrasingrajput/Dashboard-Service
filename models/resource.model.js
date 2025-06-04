@@ -1,16 +1,12 @@
-import { JSON, STRING, UUID, UUIDV4 } from "sequelize";
+import { INTEGER, JSON, STRING, UUID, UUIDV4 } from "sequelize";
 import sequelize from "../config/database.js";
 
 const Resource = sequelize.define('Access',
     {
         id: {
-            type: UUID,
-            defaultValue: UUIDV4,
+            type: INTEGER,
+            autoIncrement: true,
             primaryKey: true
-        },
-        departmentId: {
-            type: UUID,
-            references: { model: 'departments', key: 'id' }
         },
         title: {
             type: STRING,
@@ -20,8 +16,12 @@ const Resource = sequelize.define('Access',
             type: JSON,
             allowNull: false
         },
+        departmentId: {
+            type: UUID,
+            references: { model: 'departments', key: 'id' }
+        },
     },
-    { tableName: 'resources', timestamps: true }
+    { tableName: 'resources', timestamps: false }
 )
 
 export default Resource;
