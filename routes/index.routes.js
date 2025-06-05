@@ -3,6 +3,7 @@ import department_routes from './department.routes.js';
 import designation_routes from './designation.routes.js';
 import team_routes from './team.routes.js';
 import admin_routes from './admin.routes.js';
+import city_routes from './city.routes.js';
 
 const router = express.Router();
 
@@ -19,5 +20,6 @@ router.use('/department', department_routes);
 router.use('/designation', designation_routes);
 router.use('/team', team_routes);
 router.use('/admin', admin_routes);
+router.use('/city', city_routes)
 
 export default router;

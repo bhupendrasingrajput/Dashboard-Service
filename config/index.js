@@ -19,7 +19,7 @@ const config = {
         userService: process.env.USER_SERVICE_URL || 'http://localhost:3001',
         authService: process.env.AUTH_SERVICE_URL || 'http://localhost:3002',
         crmService: process.env.CRM_SERVICE_URL || 'http://localhost:3003',
-        portalService: process.env.PORTAL_SERVICE_URL || 'http://localhost:3004',
+        portalService: process.env.PORTAL_SERVICE_URL || 'http://localhost:3005',
     },
     redis: {
         host: process.env.REDIS_HOST || 'localhost',

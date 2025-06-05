@@ -24,7 +24,7 @@ if (cluster.isPrimary) {
         try {
             await connectToDatabase();
             await connectRedis();
-            
+
             const app = await startApp();
 
             app.listen(PORT, () => {
